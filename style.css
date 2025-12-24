@@ -1,0 +1,229 @@
+/* --- GLOBAL BOX-SIZING FIX --- */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: black url("assets/wallpaper.png") no-repeat center center;
+    background-size: cover;
+}
+
+#desktop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+/* TOP TASKBAR */
+#taskbar-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;  
+    background: rgba(10, 10, 15, 0.6);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    color: white;
+    z-index: 20;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#taskbar-top #clock {
+    min-width: 80px;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* BOTTOM DOCK (WIDER & ROUNDED) */
+#taskbar-bottom {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;            /* Made wider */
+    max-width: 1200px;     /* Prevents it from being too stretched on ultra-wide */
+    height: 68px;          /* Slightly taller for better presence */
+    background: rgba(20, 20, 30, 0.7);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 35px;   /* Pill shape */
+    color: white;
+    z-index: 10;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.taskbar-left {
+    display: flex;
+    align-items: center;
+    position: relative; /* Crucial for anchoring the start menu */
+}
+
+/* START BUTTON */
+.start-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5, #22c55e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.start-btn img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+
+.start-btn:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* START MENU (Anchored to Button) */
+#start-menu {
+    position: absolute;
+    bottom: 75px;  /* Sits just above the dock */
+    left: 0;       /* Aligns exactly with the left side of the start button */
+    width: 360px;
+    height: 480px;
+    background: rgba(25, 25, 35, 0.95);
+    backdrop-filter: blur(25px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 15px 45px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: bottom left;
+    overflow: hidden;
+}
+
+#start-menu.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+}
+
+/* APPS CENTER */
+.taskbar-center {
+    display: flex;
+    gap: 12px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.app {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+    cursor: pointer;
+}
+
+.app img {
+    width: 36px;
+    height: 36px;
+}
+
+.app:hover {
+    transform: translateY(-8px) scale(1.2);
+}
+
+/* Indicators */
+.app.running::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+.app.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: #22c55e;
+    border-radius: 50%;
+}
+
+/* POWER BUTTONS FOOTER */
+.start-menu-footer {
+    height: 65px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+}
+
+.power-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.power-buttons button {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.power-buttons button:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.power-buttons button img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1); /* Ensures GNOME icons show up as white */
+}
+
+.power-buttons .shutdown-btn:hover {
+    background: #ef4444; /* Red for shutdown */
+}
+
+/* UI Cleanup */
+#taskbar-top, #taskbar-bottom {
+    user-select: none;
+    cursor: default;
+}

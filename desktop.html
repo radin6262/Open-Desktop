@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoldenMoon-DE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="desktop"></div>
+
+<div id="taskbar-top">
+    <div id="top-text">The OpenDesktop</div>
+    <div id="clock"></div>
+</div>
+
+<div id="taskbar-bottom">
+    <div class="taskbar-left">
+        <div id="start-menu" class="hidden">
+            <div class="start-menu-content">
+                <div class="spacer"></div>
+            </div>
+            <div class="start-menu-footer">
+                <div class="power-buttons">
+                        <button onclick="sendToPython({action: 'power_command', command: 'sleep'})" title="Sleep">ᶻ𝗓</button>
+                        <button onclick="sendToPython({action: 'power_command', command: 'restart'})" title="Restart">↺</button>
+                        <button onclick="sendToPython({action: 'power_command', command: 'shutdown'})" title="Shutdown" class="shutdown-btn">⏻</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="start-btn" onclick="toggleStartMenu()">
+            <img src="assets/start.png" alt="Start" style="width: 24px; height: 24px;">
+        </div>
+    </div>
+
+    <div class="taskbar-center" id="dock-container">
+        <div class="app active">🌐</div>
+        <div class="app">📁</div>
+        <div class="app">⚙️</div>
+        <div class="app">🖥️</div>
+    </div>
+
+    <div class="taskbar-right"></div>
+</div>
+
+<script>
+/* --- UI LOGIC --- */
+
+// Clock functionality
+function updateClock() {
+    const now = new Date();
+    document.getElementById("clock").innerText =
+        now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Toggle Start Menu
+function toggleStartMenu() {
+    const menu = document.getElementById('start-menu');
+    menu.classList.toggle('hidden');
+}
+
+// Close menu when clicking desktop
+document.getElementById('desktop').addEventListener('click', () => {
+    document.getElementById('start-menu').classList.add('hidden');
+});
+
+// Stop menu from closing itself when clicked inside
+document.getElementById('start-menu').addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+/* --- COMMUNICATION BRIDGE --- */
+
+let currentApps = [];
+
+function sendToPython(data) {
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge) {
+        window.webkit.messageHandlers.bridge.postMessage(JSON.stringify(data));
+    }
+}
+
+function receiveDockData(apps) {
+    currentApps = apps;
+    const container = document.getElementById("dock-container");
+    container.innerHTML = "";
+
+    apps.forEach(app => {
+        const appEl = document.createElement("div");
+        appEl.className = "app";
+        appEl.id = `dock-${app.id}`;
+        appEl.innerHTML = `<img src="${app.icon_path}" style="width:32px; height:32px;">`;
+        
+        appEl.onclick = () => {
+            if (appEl.classList.contains("running")) {
+                sendToPython({ action: "focus_app", command: app.exec });
+            } else {
+                sendToPython({ action: "launch_app", command: app.exec });
+            }
+        };
+        container.appendChild(appEl);
+    });
+}
+
+function updateRunningIndicators(runningList) {
+    currentApps.forEach(app => {
+        const el = document.getElementById(`dock-${app.id}`);
+        if (!el) return;
+        const isRunning = runningList.some(name => app.exec.toLowerCase().includes(name));
+        el.classList.toggle("running", isRunning);
+    });
+}
+
+function receivePowerIcons(icons) {
+    if(icons.sleep) document.getElementById('btn-sleep').innerHTML = `<img src="${icons.sleep}" style="width:20px; height:20px;">`;
+    if(icons.restart) document.getElementById('btn-restart').innerHTML = `<img src="${icons.restart}" style="width:20px; height:20px;">`;
+    if(icons.shutdown) document.getElementById('btn-shutdown').innerHTML = `<img src="${icons.shutdown}" style="width:20px; height:20px;">`;
+}
+
+/* --- INIT --- */
+
+window.onload = () => {
+    sendToPython({ action: "get_dock_apps" });
+    sendToPython({ action: "get_power_icons" });
+};
+
+// Selection/Drag Protection
+const taskbars = ['taskbar-top', 'taskbar-bottom'];
+taskbars.forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('mousedown', e => e.preventDefault());
+    el.addEventListener('selectstart', e => e.preventDefault());
+});
+</script>
+
+</body>
+</html>

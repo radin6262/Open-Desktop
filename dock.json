@@ -1,0 +1,5 @@
+[
+    {"id": "brave", "name": "Web Browser", "icon": "brave", "exec": "brave-browser"},
+    {"id": "files", "name": "Files", "icon": "system-file-manager", "exec": "nautilus"},
+    {"id": "terminal", "name": "Terminal", "icon": "utilities-terminal", "exec": "gnome-terminal"}
+]
