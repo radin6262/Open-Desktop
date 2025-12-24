@@ -78,7 +78,12 @@ html, body {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #4f46e5, #22c55e);
+    background-color: black;
+    background-image: url("assets/start.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,11 +92,12 @@ html, body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.start-btn img {
+
+/* .start-btn img {
     width: 26px;
     height: 26px;
     object-fit: contain;
-}
+} */
 
 .start-btn:hover {
     transform: scale(1.1) rotate(5deg);
