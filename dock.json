@@ -1,5 +1,12 @@
 [
-    {"id": "brave", "name": "Web Browser", "icon": "brave", "exec": "brave-browser"},
-    {"id": "files", "name": "Files", "icon": "system-file-manager", "exec": "nautilus"},
-    {"id": "terminal", "name": "Terminal", "icon": "utilities-terminal", "exec": "gnome-terminal"}
+    {"id": "brave", "name": "Web Browser", "icon": "brave", "exec": "brave-browser", "FilePathBased": false},
+    {"id": "files", "name": "Files", "icon": "system-file-manager", "exec": "nautilus", "FilePathBased": false},
+    {"id": "terminal", "name": "Terminal", "icon": "utilities-terminal", "exec": "gnome-terminal", "FilePathBased": false},
+    {
+        "id": "electro-browser-app", 
+        "name": "Electro Browser", 
+        "icon": "assets/browser.ico", 
+        "exec": "Electro-browser-linux/main.py", 
+        "FilePathBased": true
+    }
 ]

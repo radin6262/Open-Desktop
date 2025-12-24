@@ -18,17 +18,18 @@
 <div id="taskbar-bottom">
     <div class="taskbar-left">
         <div id="start-menu" class="hidden">
-            <div class="start-menu-content">
-                <div class="spacer"></div>
-            </div>
-            <div class="start-menu-footer">
-                <div class="power-buttons">
-                        <button onclick="sendToPython({action: 'power_command', command: 'sleep'})" title="Sleep">ᶻ𝗓</button>
-                        <button onclick="sendToPython({action: 'power_command', command: 'restart'})" title="Restart">↺</button>
-                        <button onclick="sendToPython({action: 'power_command', command: 'shutdown'})" title="Shutdown" class="shutdown-btn">⏻</button>
-                </div>
-            </div>
+    <div id="start-apps-list" class="start-menu-content">
+        <div class="spacer"></div>
+    </div>
+    
+    <div class="start-menu-footer">
+        <div class="power-buttons">
+            <button onclick="sendToPython({action: 'power_command', command: 'sleep'})" title="Sleep">ᶻ𝗓</button>
+            <button onclick="sendToPython({action: 'power_command', command: 'restart'})" title="Restart">↺</button>
+            <button onclick="sendToPython({action: 'power_command', command: 'shutdown'})" title="Shutdown" class="shutdown-btn">⏻</button>
         </div>
+    </div>
+</div>
 
         <div class="start-btn" onclick="toggleStartMenu()">
         </div>
@@ -86,18 +87,23 @@ function receiveDockData(apps) {
     currentApps = apps;
     const container = document.getElementById("dock-container");
     container.innerHTML = "";
-
     apps.forEach(app => {
         const appEl = document.createElement("div");
         appEl.className = "app";
         appEl.id = `dock-${app.id}`;
-        appEl.innerHTML = `<img src="${app.icon_path}" style="width:32px; height:32px;">`;
+        appEl.innerHTML = `<img src="${app.icon_path}" style="width:28px; height:28px;">`;
         
         appEl.onclick = () => {
-            if (appEl.classList.contains("running")) {
+            const isRunning = appEl.classList.contains("running");
+            if (isRunning) {
                 sendToPython({ action: "focus_app", command: app.exec });
             } else {
-                sendToPython({ action: "launch_app", command: app.exec });
+                // Pass the FilePathBased flag to the launch handler
+                sendToPython({ 
+                    action: "launch_app", 
+                    command: app.exec, 
+                    file_path_based: app.FilePathBased || false 
+                });
             }
         };
         container.appendChild(appEl);
@@ -116,15 +122,39 @@ function updateRunningIndicators(runningList) {
 function receivePowerIcons(icons) {
     if(icons.sleep) document.getElementById('btn-sleep').innerHTML = `<img src="${icons.sleep}" style="width:20px; height:20px;">`;
     if(icons.restart) document.getElementById('btn-restart').innerHTML = `<img src="${icons.restart}" style="width:20px; height:20px;">`;
-    if(icons.shutdown) document.getElementById('btn-shutdown').innerHTML = `<img src="${icons.shutdown}" style="width:20px; height:20px;">`;
+    if(icons.shutdown) document.getElementById('btn-shutdown').
+    innerHTML = `<img src="${icons.shutdown}" style="width:20px; height:20px;">`;
 }
 
-/* --- INIT --- */
+/* --- NEW START MENU LOGIC --- */
+function receiveStartMenuApps(apps) {
+    const container = document.getElementById("start-apps-list");
+    container.innerHTML = ""; // Clear loader/spacer
+    
+    apps.forEach(app => {
+        const item = document.createElement("div");
+        item.className = "start-app-item";
+        item.innerHTML = `
+            <img src="${app.icon}" style="width:32px; height:32px;">
+            <span>${app.name}</span>
+        `;
+        item.onclick = (e) => {
+            e.stopPropagation();
+            sendToPython({ action: "launch_app", command: app.exec });
+            toggleStartMenu();
+        };
+        container.appendChild(item);
+    });
+}
 
+// Update your window.onload to fetch these apps
 window.onload = () => {
     sendToPython({ action: "get_dock_apps" });
     sendToPython({ action: "get_power_icons" });
+    sendToPython({ action: "get_start_apps" }); // Fetch apps
 };
+
+/* --- INIT --- */
 
 // Selection/Drag Protection
 const taskbars = ['taskbar-top', 'taskbar-bottom'];
