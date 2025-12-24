@@ -151,7 +151,7 @@ function receiveStartMenuApps(apps) {
 window.onload = () => {
     sendToPython({ action: "get_dock_apps" });
     sendToPython({ action: "get_power_icons" });
-    sendToPython({ action: "get_start_apps" }); // Fetch apps
+    sendToPython({ action: "get_start_apps" }); // New call
 };
 
 /* --- INIT --- */
