@@ -91,6 +91,26 @@ html, body {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
+.icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: black;
+    background-image: url("assets/start.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    margin-bottom: 8px; /* 👈 move it up */
+}
+
 
 
 /* .start-btn img {

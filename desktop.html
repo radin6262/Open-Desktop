@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoldenMoon-DE</title>
+    <title>OpenDesktop Project</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,44 +11,38 @@
 <div id="desktop"></div>
 
 <div id="taskbar-top">
-    <div id="top-text">The OpenDesktop</div>
+    <div class="icon"></div>
+    <div id="top-text">OpenDesktop Project</div>
     <div id="clock"></div>
 </div>
 
 <div id="taskbar-bottom">
     <div class="taskbar-left">
         <div id="start-menu" class="hidden">
-    <div id="start-apps-list" class="start-menu-content">
-        <div class="spacer"></div>
-    </div>
-    
-    <div class="start-menu-footer">
-        <div class="power-buttons">
-            <button onclick="sendToPython({action: 'power_command', command: 'sleep'})" title="Sleep">ᶻ𝗓</button>
-            <button onclick="sendToPython({action: 'power_command', command: 'restart'})" title="Restart">↺</button>
-            <button onclick="sendToPython({action: 'power_command', command: 'shutdown'})" title="Shutdown" class="shutdown-btn">⏻</button>
+            <div id="start-apps-list" class="start-menu-content">
+                <div class="spacer"></div>
+            </div>
+            <div class="start-menu-footer">
+                <div class="power-buttons">
+                    <button id="btn-sleep" onclick="sendToPython({action: 'power_command', command: 'sleep'})" title="Sleep"><img src="assets/night.svg" alt="Sleep" class="btn-icon"></button>
+                    <button id="btn-restart" onclick="sendToPython({action: 'power_command', command: 'restart'})" title="Restart">↺</button>
+                    <button id="btn-shutdown" onclick="sendToPython({action: 'power_command', command: 'shutdown'})" title="Shutdown" class="shutdown-btn">⏻</button>
+                    <button id="btn-sleep" onclick="sendToPython({action: 'open_bg_picker'})" title="bg-picker" class="sleep-btn"><img src="assets/set-wallpaper.svg" alt="Settings" class="btn-icon"></button>
+
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
-        <div class="start-btn" onclick="toggleStartMenu()">
-        </div>
+        <div class="start-btn" onclick="toggleStartMenu()"></div>
     </div>
 
-    <div class="taskbar-center" id="dock-container">
-        <div class="app active">🌐</div>
-        <div class="app">📁</div>
-        <div class="app">⚙️</div>
-        <div class="app">🖥️</div>
+    <div class="taskbar-center" id="dock-container"></div>
+    <div class="taskbar-right">
+        <!-- <div class="settings-btn" onclick="sendToPython({action: 'open_bg_picker'})" style="cursor:pointer">⚙️</div> -->
     </div>
-
-    <div class="taskbar-right"></div>
 </div>
 
 <script>
 /* --- UI LOGIC --- */
-
-// Clock functionality
 function updateClock() {
     const now = new Date();
     document.getElementById("clock").innerText =
@@ -57,87 +51,72 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// Toggle Start Menu
 function toggleStartMenu() {
-    const menu = document.getElementById('start-menu');
-    menu.classList.toggle('hidden');
+    document.getElementById('start-menu').classList.toggle('hidden');
 }
 
-// Close menu when clicking desktop
 document.getElementById('desktop').addEventListener('click', () => {
     document.getElementById('start-menu').classList.add('hidden');
 });
 
-// Stop menu from closing itself when clicked inside
-document.getElementById('start-menu').addEventListener('click', (e) => {
-    e.stopPropagation();
-});
+document.getElementById('start-menu').addEventListener('click', (e) => e.stopPropagation());
 
 /* --- COMMUNICATION BRIDGE --- */
-
-let currentApps = [];
+let pinnedApps = [];
 
 function sendToPython(data) {
-    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge) {
+    if (window.webkit && window.webkit.messageHandlers.bridge) {
         window.webkit.messageHandlers.bridge.postMessage(JSON.stringify(data));
     }
 }
 
 function receiveDockData(apps) {
-    currentApps = apps;
+    pinnedApps = apps;
+    updateRunningIndicators([]); 
+}
+
+function updateRunningIndicators(runningWindows) {
     const container = document.getElementById("dock-container");
     container.innerHTML = "";
-    apps.forEach(app => {
+
+    // 1. Pinned Apps
+    pinnedApps.forEach(app => {
+        const isRunning = runningWindows.some(w => app.exec.toLowerCase().includes(w.class));
         const appEl = document.createElement("div");
-        appEl.className = "app";
-        appEl.id = `dock-${app.id}`;
-        appEl.innerHTML = `<img src="${app.icon_path}" style="width:28px; height:28px;">`;
+        appEl.className = `app ${isRunning ? "running" : ""}`;
+        appEl.innerHTML = `<img src="${app.icon_path}" onerror="this.src='assets/generic.png'">`;
         
         appEl.onclick = () => {
-            const isRunning = appEl.classList.contains("running");
             if (isRunning) {
-                sendToPython({ action: "focus_app", command: app.exec });
+                sendToPython({ action: "focus_app_by_command", command: app.exec });
             } else {
-                // Pass the FilePathBased flag to the launch handler
-                sendToPython({ 
-                    action: "launch_app", 
-                    command: app.exec, 
-                    file_path_based: app.FilePathBased || false 
-                });
+                sendToPython({ action: "launch_app", command: app.exec, file_path_based: app.FilePathBased || false });
             }
         };
         container.appendChild(appEl);
     });
-}
 
-function updateRunningIndicators(runningList) {
-    currentApps.forEach(app => {
-        const el = document.getElementById(`dock-${app.id}`);
-        if (!el) return;
-        const isRunning = runningList.some(name => app.exec.toLowerCase().includes(name));
-        el.classList.toggle("running", isRunning);
+    // 2. Pop-up (Unpinned) Apps
+    runningWindows.forEach(win => {
+        const isPinned = pinnedApps.some(p => p.exec.toLowerCase().includes(win.class));
+        if (!isPinned) {
+            const appEl = document.createElement("div");
+            appEl.className = "app running unpinned";
+            appEl.innerHTML = `<img src="${win.icon || ''}" onerror="this.src='assets/generic.png'">`;
+            appEl.title = win.name;
+            appEl.onclick = () => sendToPython({ action: "focus_app", xid: win.xid });
+            container.appendChild(appEl);
+        }
     });
 }
 
-function receivePowerIcons(icons) {
-    if(icons.sleep) document.getElementById('btn-sleep').innerHTML = `<img src="${icons.sleep}" style="width:20px; height:20px;">`;
-    if(icons.restart) document.getElementById('btn-restart').innerHTML = `<img src="${icons.restart}" style="width:20px; height:20px;">`;
-    if(icons.shutdown) document.getElementById('btn-shutdown').
-    innerHTML = `<img src="${icons.shutdown}" style="width:20px; height:20px;">`;
-}
-
-/* --- NEW START MENU LOGIC --- */
 function receiveStartMenuApps(apps) {
     const container = document.getElementById("start-apps-list");
-    container.innerHTML = ""; // Clear loader/spacer
-    
+    container.innerHTML = "";
     apps.forEach(app => {
         const item = document.createElement("div");
         item.className = "start-app-item";
-        item.innerHTML = `
-            <img src="${app.icon}" style="width:32px; height:32px;">
-            <span>${app.name}</span>
-        `;
+        item.innerHTML = `<img src="${app.icon}" style="width:32px; height:32px;"> <span>${app.name}</span>`;
         item.onclick = (e) => {
             e.stopPropagation();
             sendToPython({ action: "launch_app", command: app.exec });
@@ -147,23 +126,29 @@ function receiveStartMenuApps(apps) {
     });
 }
 
-// Update your window.onload to fetch these apps
+function receivePowerIcons(icons) {
+    if(icons.restart) document.getElementById('btn-restart').innerHTML = `<img src="${icons.restart}" style="width:20px; height:20px;">`;
+    if(icons.shutdown) document.getElementById('btn-shutdown').innerHTML = `<img src="${icons.shutdown}" style="width:20px; height:20px;">`;
+}
+
+function applyBackground(path) {
+    document.getElementById('desktop').style.backgroundImage = `url('${path}')`;
+}
+function receiveSavedBackground(path) { applyBackground(path); }
+
 window.onload = () => {
     sendToPython({ action: "get_dock_apps" });
     sendToPython({ action: "get_power_icons" });
-    sendToPython({ action: "get_start_apps" }); // New call
+    sendToPython({ action: "get_start_apps" });
+    sendToPython({ action: "get_saved_background" });
 };
 
-/* --- INIT --- */
-
-// Selection/Drag Protection
-const taskbars = ['taskbar-top', 'taskbar-bottom'];
-taskbars.forEach(id => {
+/* --- PROTECTION --- */
+['taskbar-top', 'taskbar-bottom'].forEach(id => {
     const el = document.getElementById(id);
     el.addEventListener('mousedown', e => e.preventDefault());
     el.addEventListener('selectstart', e => e.preventDefault());
 });
 </script>
-
 </body>
 </html>
