@@ -19,16 +19,21 @@
 <div id="taskbar-bottom">
     <div class="taskbar-left">
         <div id="start-menu" class="hidden">
-            <div id="start-apps-list" class="start-menu-content">
-                <div class="spacer"></div>
+            <div class="search-container">
+                <input type="text" id="start-search" placeholder="Search applications..." onkeyup="filterApps()" autocomplete="off">
             </div>
+            <div id="start-apps-list" class="start-menu-content">
+                </div>
             <div class="start-menu-footer">
                 <div class="power-buttons">
-                    <button id="btn-sleep" onclick="sendToPython({action: 'power_command', command: 'sleep'})" title="Sleep"><img src="assets/night.svg" alt="Sleep" class="btn-icon"></button>
+                    <button id="btn-sleep" onclick="sendToPython({action: 'power_command', command: 'sleep'})" title="Sleep">
+                        <img src="assets/night.svg" alt="Sleep" class="btn-icon">
+                    </button>
                     <button id="btn-restart" onclick="sendToPython({action: 'power_command', command: 'restart'})" title="Restart">↺</button>
                     <button id="btn-shutdown" onclick="sendToPython({action: 'power_command', command: 'shutdown'})" title="Shutdown" class="shutdown-btn">⏻</button>
-                    <button id="btn-sleep" onclick="sendToPython({action: 'open_bg_picker'})" title="bg-picker" class="sleep-btn"><img src="assets/set-wallpaper.svg" alt="Settings" class="btn-icon"></button>
-
+                    <button id="btn-settings" onclick="sendToPython({action: 'open_bg_picker'})" title="Wallpaper" class="sleep-btn">
+                        <img src="assets/set-wallpaper.svg" alt="Settings" class="btn-icon">
+                    </button>
                 </div>
             </div>
         </div>
@@ -36,12 +41,14 @@
     </div>
 
     <div class="taskbar-center" id="dock-container"></div>
-    <div class="taskbar-right">
-        <!-- <div class="settings-btn" onclick="sendToPython({action: 'open_bg_picker'})" style="cursor:pointer">⚙️</div> -->
-    </div>
+    <div class="taskbar-right"></div>
 </div>
 
 <script>
+/* --- STATE MANAGEMENT --- */
+let pinnedApps = [];
+let allApps = [];
+
 /* --- UI LOGIC --- */
 function updateClock() {
     const now = new Date();
@@ -52,34 +59,76 @@ setInterval(updateClock, 1000);
 updateClock();
 
 function toggleStartMenu() {
-    document.getElementById('start-menu').classList.toggle('hidden');
+    const menu = document.getElementById('start-menu');
+    const isHidden = menu.classList.toggle('hidden');
+    
+    // Search Bar Management
+    if (!isHidden) {
+        const searchInput = document.getElementById('start-search');
+        searchInput.value = ""; 
+        renderApps(allApps); // Reset list to show all
+        setTimeout(() => searchInput.focus(), 50); 
+    }
 }
 
+// Close menu when clicking desktop
 document.getElementById('desktop').addEventListener('click', () => {
     document.getElementById('start-menu').classList.add('hidden');
 });
 
+// Prevent menu from closing when clicking inside it
 document.getElementById('start-menu').addEventListener('click', (e) => e.stopPropagation());
 
-/* --- COMMUNICATION BRIDGE --- */
-let pinnedApps = [];
+/* --- SEARCH & APP RENDERING --- */
+function filterApps() {
+    const query = document.getElementById('start-search').value.toLowerCase();
+    const filtered = allApps.filter(app => 
+        app.name.toLowerCase().includes(query)
+    );
+    renderApps(filtered);
+}
 
+function renderApps(appsToDisplay) {
+    const container = document.getElementById("start-apps-list");
+    container.innerHTML = "";
+    
+    appsToDisplay.forEach(app => {
+        const item = document.createElement("div");
+        item.className = "start-app-item";
+        item.innerHTML = `<img src="${app.icon}" onerror="this.src='assets/generic.png'"> <span>${app.name}</span>`;
+        item.onclick = (e) => {
+            e.stopPropagation();
+            sendToPython({ action: "launch_app", command: app.exec });
+            toggleStartMenu();
+        };
+        container.appendChild(item);
+    });
+}
+
+/* --- COMMUNICATION BRIDGE --- */
 function sendToPython(data) {
     if (window.webkit && window.webkit.messageHandlers.bridge) {
         window.webkit.messageHandlers.bridge.postMessage(JSON.stringify(data));
     }
 }
 
+// Called by Python to populate the Dock
 function receiveDockData(apps) {
     pinnedApps = apps;
     updateRunningIndicators([]); 
+}
+
+// Called by Python to populate the Start Menu
+function receiveStartMenuApps(apps) {
+    allApps = apps;
+    renderApps(allApps);
 }
 
 function updateRunningIndicators(runningWindows) {
     const container = document.getElementById("dock-container");
     container.innerHTML = "";
 
-    // 1. Pinned Apps
+    // Render Pinned Apps
     pinnedApps.forEach(app => {
         const isRunning = runningWindows.some(w => app.exec.toLowerCase().includes(w.class));
         const appEl = document.createElement("div");
@@ -96,7 +145,7 @@ function updateRunningIndicators(runningWindows) {
         container.appendChild(appEl);
     });
 
-    // 2. Pop-up (Unpinned) Apps
+    // Render Unpinned Running Apps
     runningWindows.forEach(win => {
         const isPinned = pinnedApps.some(p => p.exec.toLowerCase().includes(win.class));
         if (!isPinned) {
@@ -110,22 +159,6 @@ function updateRunningIndicators(runningWindows) {
     });
 }
 
-function receiveStartMenuApps(apps) {
-    const container = document.getElementById("start-apps-list");
-    container.innerHTML = "";
-    apps.forEach(app => {
-        const item = document.createElement("div");
-        item.className = "start-app-item";
-        item.innerHTML = `<img src="${app.icon}" style="width:32px; height:32px;"> <span>${app.name}</span>`;
-        item.onclick = (e) => {
-            e.stopPropagation();
-            sendToPython({ action: "launch_app", command: app.exec });
-            toggleStartMenu();
-        };
-        container.appendChild(item);
-    });
-}
-
 function receivePowerIcons(icons) {
     if(icons.restart) document.getElementById('btn-restart').innerHTML = `<img src="${icons.restart}" style="width:20px; height:20px;">`;
     if(icons.shutdown) document.getElementById('btn-shutdown').innerHTML = `<img src="${icons.shutdown}" style="width:20px; height:20px;">`;
@@ -134,8 +167,10 @@ function receivePowerIcons(icons) {
 function applyBackground(path) {
     document.getElementById('desktop').style.backgroundImage = `url('${path}')`;
 }
+
 function receiveSavedBackground(path) { applyBackground(path); }
 
+/* --- INIT --- */
 window.onload = () => {
     sendToPython({ action: "get_dock_apps" });
     sendToPython({ action: "get_power_icons" });
@@ -146,8 +181,10 @@ window.onload = () => {
 /* --- PROTECTION --- */
 ['taskbar-top', 'taskbar-bottom'].forEach(id => {
     const el = document.getElementById(id);
-    el.addEventListener('mousedown', e => e.preventDefault());
-    el.addEventListener('selectstart', e => e.preventDefault());
+    if (el) {
+        el.addEventListener('mousedown', e => { if(e.target.tagName !== 'INPUT') e.preventDefault(); });
+        el.addEventListener('selectstart', e => { if(e.target.tagName !== 'INPUT') e.preventDefault(); });
+    }
 });
 </script>
 </body>

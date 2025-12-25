@@ -294,3 +294,26 @@ html, body {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 2px;
 }
+/* SEARCH BAR STYLES */
+.search-container {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#start-search {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+}
+
+#start-search:focus {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.4);
+}
