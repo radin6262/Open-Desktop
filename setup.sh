@@ -4,6 +4,10 @@ set -e
 echo "Checking sudo access..."
 sudo -v
 
+
+echo "Welcome to The Open-Desktop project installation prompt"
+echo "Dev: Radin6262"
+sleep 1
 # --------------------------------------------------
 # System dependencies for pyenv + PyGObject
 # --------------------------------------------------
@@ -19,6 +23,8 @@ sudo apt install -y \
   gobject-introspection libgirepository-2.0-dev \
   libglib2.0-dev libcairo2-dev pkg-config cmake
 
+sleep 1
+echo "Checking for PyEnv"
 # --------------------------------------------------
 # Install pyenv (if not already installed)
 # --------------------------------------------------
@@ -35,10 +41,11 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
-
+sleep 1.2
 # --------------------------------------------------
 # Install Python 3.12 via pyenv
 # --------------------------------------------------
+echo "Python installation:"
 PYTHON_VERSION="3.12.2"
 
 if ! pyenv versions | grep -q "$PYTHON_VERSION"; then
@@ -47,20 +54,23 @@ if ! pyenv versions | grep -q "$PYTHON_VERSION"; then
 fi
 
 pyenv global "$PYTHON_VERSION"
+echo "Python installation finished"
+sleep 1
 
 # --------------------------------------------------
 # Upgrade pip (SAFE – pyenv Python)
 # --------------------------------------------------
+echo "Upgrading Pip / If not latest version"
 python -m pip install --upgrade pip setuptools wheel
-
+sleep 1.2
 # --------------------------------------------------
-# Install PyGObject (NO PEP 668 issue)
+# Install PyGObject
 # --------------------------------------------------
 echo "Installing PyGObject..."
 python -m pip install PyGObject
 
 # --------------------------------------------------
-# Clone your project
+# Clone The Open Desktop project
 # --------------------------------------------------
 echo "Cloning Open Desktop"
 git clone https://github.com/radin6262/Open-Desktop.git
@@ -74,7 +84,7 @@ python --version
 echo
 echo "To run later:"
 echo "  cd OpenDesktop"
-echo "  python main.py"
+echo "  python3 desktop.py"
 echo
 echo "This shell will exit in 8 seconds..."
 sleep 8

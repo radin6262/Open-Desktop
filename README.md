@@ -1,4 +1,4 @@
-# Open Desktop
+# The Open Desktop Project
 
 > A desktop environment project with python!
 

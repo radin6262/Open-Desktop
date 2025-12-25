@@ -13,7 +13,7 @@ gi.require_version("Wnck", "3.0")
 
 from gi.repository import Gtk, WebKit2, Gdk, Wnck, GLib
 
-class DesktopService(Gtk.Window):
+class OpenDesktop(Gtk.Window):
     def __init__(self):
         super().__init__(title="OpenDesktop Environment")
         self.set_decorated(False)
@@ -255,5 +255,5 @@ class DesktopService(Gtk.Window):
 
 if __name__ == "__main__":
     GLib.idle_add(lambda: Wnck.Screen.get_default().force_update())
-    DesktopService()
+    OpenDesktop()
     Gtk.main()
