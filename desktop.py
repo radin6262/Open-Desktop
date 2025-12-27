@@ -52,13 +52,24 @@ class OpenDesktop(Gtk.Window):
         self.show_all()
 
     def get_system_icon_path(self, icon_name):
-        """Resolves system icon names (e.g. 'firefox') to full local paths."""
-        if not icon_name:
-            return ""
+        """Resolves system icon names to full local paths, with a fallback."""
+        # Define the default fallback icon name
+        DEFAULT_ICON = "preferences-system" 
+        
         icon_theme = Gtk.IconTheme.get_default()
-        icon_info = icon_theme.lookup_icon(icon_name, 48, 0)
-        if icon_info:
-            return "file://" + icon_info.get_filename()
+        
+        # 1. Try to find the requested icon
+        if icon_name:
+            icon_info = icon_theme.lookup_icon(icon_name, 48, 0)
+            if icon_info:
+                return "file://" + icon_info.get_filename()
+        
+        # 2. Fallback: Try to find the default settings icon
+        fallback_info = icon_theme.lookup_icon(DEFAULT_ICON, 48, 0)
+        if fallback_info:
+            return "file://" + fallback_info.get_filename()
+            
+        # 3. Ultimate safety: return empty string if even the fallback is missing
         return ""
 
     def update_running_apps(self):

@@ -18,7 +18,7 @@ The desktop environment is under heavy development. Expect breaking changes, inc
 - First install the setup.sh
 - run it in the folder you wanna install our program
 - open the Open-desktop folder that was made by the program
-- Run desktop.py
+- Run main.py
 
 ## Contributing
 
