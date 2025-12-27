@@ -61,14 +61,16 @@ sleep 1
 # Upgrade pip (SAFE – pyenv Python)
 # --------------------------------------------------
 echo "Upgrading Pip / If not latest version"
-python -m pip install --upgrade pip setuptools wheel
+python3 -m pip install --upgrade pip setuptools wheel
 sleep 1.2
 # --------------------------------------------------
 # Install PyGObject
 # --------------------------------------------------
 echo "Installing PyGObject..."
-python -m pip install PyGObject
-
+python3 -m pip install PyGObject
+sleep 1.2
+echo "Installating pyside6"
+python3 -m pip install pyside6
 # --------------------------------------------------
 # Clone The Open Desktop project
 # --------------------------------------------------
@@ -84,7 +86,7 @@ python --version
 echo
 echo "To run later:"
 echo "  cd OpenDesktop"
-echo "  python3 desktop.py"
+echo "  python3 main.py"
 echo
 echo "This shell will exit in 8 seconds..."
 sleep 8
