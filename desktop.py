@@ -1,3 +1,9 @@
+# Visit our github repo for more info on license
+
+# You are prohibited of coping/rewriting/integrating this code with your personal app
+# Usage of this app is only permitted to personal or commercial use but you can't use it as "tradiing/buy/sell/rent/redist"
+# Copyright 2025 (C) Radin6262, All rights reserved
+
 #!/usr/bin/env python3
 import gi
 import json
