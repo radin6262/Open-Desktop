@@ -79,16 +79,27 @@ class OpenDesktop(Gtk.Window):
         return ""
 
     def update_running_apps(self):
-        """Scans the window list and sends details to the frontend."""
+        """Scans the window list and sends details to the frontend, excluding itself."""
         self.screen.force_update()
         running_data = []
+        
+        # Get the XID of this window (the dock/environment itself)
+        own_xid = None
+        if self.get_window():
+            own_xid = self.get_window().get_xid()
+
         for w in self.screen.get_windows():
-            # Filter for normal application windows only
+            # Filter for normal application windows AND ensure it's not THIS window
             if w.get_window_type() == Wnck.WindowType.NORMAL:
+                window_xid = w.get_xid()
+                
+                if window_xid == own_xid:
+                    continue # Skip adding our own window to the dock list
+                
                 class_group = w.get_class_group_name().lower()
                 running_data.append({
                     "class": class_group,
-                    "xid": w.get_xid(),
+                    "xid": window_xid,
                     "name": w.get_name(),
                     "icon": self.get_system_icon_path(class_group)
                 })
@@ -97,7 +108,6 @@ class OpenDesktop(Gtk.Window):
         js_call = f"updateRunningIndicators({json.dumps(running_data)})"
         self.webview.run_javascript(js_call)
         return True
-
     def on_js_message(self, manager, result):
         """Dispatches messages from the UI to Python handlers."""
         try:
