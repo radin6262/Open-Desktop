@@ -33,5 +33,5 @@ This software is provided **as-is**, without any warranty. Use at your own risk.
 
 ## Author
 
-**Radin6262** Copyright 2025
+**Radin6262** Copyright 2025<br>
 G-Mail: radindavari054laptop@gmail.com
