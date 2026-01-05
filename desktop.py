@@ -10,7 +10,14 @@ import json
 import os
 import subprocess
 import configparser
+# In your main script:
+from modules.launch_utils import launch_script_pythonw_style
 
+# Run your script like you would with pythonw
+
+
+# Or just launch and forget
+launch_script_pythonw_style("/path/to/background_task.py")
 # Core dependencies for GUI, Web Rendering, and Window Management
 gi.require_version("Gtk", "3.0")
 gi.require_version("WebKit2", "4.1")
@@ -55,7 +62,7 @@ class OpenDesktop(Gtk.Window):
         # Window Tracking Setup via libwnck
         self.screen = Wnck.Screen.get_default()
         # Poll for running apps every 2 seconds to update the dock/taskbar
-        GLib.timeout_add_seconds(2, self.update_running_apps)
+        GLib.timeout_add(100, self.update_running_apps)
 
         self.show_all()
     def on_webview_button_press(self, widget, event):
@@ -150,6 +157,8 @@ class OpenDesktop(Gtk.Window):
                 self.handle_open_bg_picker()
             elif action == "get_saved_background":
                 self.handle_get_saved_background()
+            elif action == "Runabout":
+                process = launch_script_pythonw_style("apps/aboutpc.py")
         except Exception as e:
             print(f"Bridge error: {e}")
 
