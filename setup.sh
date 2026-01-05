@@ -12,7 +12,11 @@ sleep 1
 # System dependencies for pyenv + PyGObject
 # --------------------------------------------------
 echo "Installing pygobject dependencies..."
-sudo apt update
+set +e
+if ! timeout 60s sudo apt update; then
+    echo "apt update took too long, skipping..."
+fi
+set -e  # re-enable exit-on-error
 sudo apt install -y \
   git curl wget build-essential \
   libssl-dev zlib1g-dev libbz2-dev \
