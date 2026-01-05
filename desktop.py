@@ -13,11 +13,6 @@ import configparser
 # In your main script:
 from modules.launch_utils import launch_script_pythonw_style
 
-# Run your script like you would with pythonw
-
-
-# Or just launch and forget
-launch_script_pythonw_style("/path/to/background_task.py")
 # Core dependencies for GUI, Web Rendering, and Window Management
 gi.require_version("Gtk", "3.0")
 gi.require_version("WebKit2", "4.1")

@@ -15,7 +15,7 @@ class OpenAbout(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("System Properties")
-        self.setFixedSize(560,723)
+        self.setFixedSize(560,875)
         
         # Window icon
         self.setWindowIcon(QIcon.fromTheme("computer", 
