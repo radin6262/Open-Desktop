@@ -42,6 +42,8 @@ class OpenDesktop(Gtk.Window):
         # Initialize the webview
         self.webview = WebKit2.WebView.new_with_user_content_manager(self.content_manager)
         self.webview.set_settings(settings)
+        self.webview.connect("button-press-event", self.on_webview_button_press)
+        self.webview.connect("context-menu", self.on_context_menu)
         
         # Load the HTML interface
         html_path = "file://" + os.path.join(self.base_dir, "desktop.html")
@@ -56,6 +58,19 @@ class OpenDesktop(Gtk.Window):
         GLib.timeout_add_seconds(2, self.update_running_apps)
 
         self.show_all()
+    def on_webview_button_press(self, widget, event):
+        # Block right-click in WebView
+        if event.button == 3:  # Right mouse button
+            print("Right-click blocked in WebView")
+            return True  # Block the event
+        
+        return False  # Allow other clicks
+    
+    def on_context_menu(self, web_view, context_menu, event, hit_test_result):
+        # This prevents the context menu from showing
+        print("Context menu prevented")
+        return True  # Return True to prevent default context menu
+
 
     def get_system_icon_path(self, icon_name):
         """Resolves system icon names to full local paths, with a fallback."""

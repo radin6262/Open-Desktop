@@ -3,13 +3,11 @@
 > A desktop environment project with python!
 
 **A open source desktop**
+**Due to some limitations the progress of this DE has been paused/slowed down...**
+
+---
 
 
-## Development Status
-
-**Work in Progress**
-
-The desktop environment is under heavy development. Expect breaking changes, incomplete features, and experimental code.
 
 ## Supported Platforms
 * Linux
@@ -22,11 +20,11 @@ The desktop environment is under heavy development. Expect breaking changes, inc
 
 ## Contributing
 
-Public contributions are **not accepted**.
+Public contributions are **accepted**.
 
 If you wish to contribute:
 
-* Contact the author directly
+* Contact the author directly with provided mail
 * Contributions may be reviewed and merged manually
 
 ## Disclaimer
@@ -35,4 +33,5 @@ This software is provided **as-is**, without any warranty. Use at your own risk.
 
 ## Author
 
-**Radin6262** Copyright 2025
+**Radin6262** Copyright 2025<br>
+G-Mail: radindavari054laptop@gmail.com
