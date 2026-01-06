@@ -24,8 +24,8 @@ Public contributions are **accepted**.
 
 If you wish to contribute:
 
-* Contact the author directly with provided mail
-* Contributions may be reviewed and merged manually
+* fork the repo and apply changes and submit pull request
+* Pull requests will be reviewed and merged manually
 
 ## Disclaimer
 
