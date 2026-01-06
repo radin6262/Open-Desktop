@@ -15,7 +15,7 @@
 ## Installation
 - First install the setup.sh
 - run it in the folder you wanna install our program
-* or you can just run this cmd ```bash curl -s https://raw.githubusercontent.com/radin6262/Open-Desktop/refs/heads/main/setup.sh | bash ``` but you'll need to run it in the dir you want!
+* or you can just run this cmd ```curl -s https://raw.githubusercontent.com/radin6262/Open-Desktop/refs/heads/main/setup.sh | bash ``` but you'll need to run it in the dir you want!
 - open the Open-desktop folder that was made by the program
 - Run main.py
 
