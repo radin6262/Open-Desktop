@@ -3,7 +3,7 @@
 > A desktop environment project with python!
 
 **A open source desktop**
-**Due to some limitations the progress of this DE has been paused/slowed down...**
+**Due to some limitations the progress of this DE has been pretty messy. some days there is 4 updates, in some there is none so its unstable progress for now...**
 
 ---
 
