@@ -1,9 +1,9 @@
 # The Open Desktop Project
 
-> A desktop environment project with python!
+> The only good desktop environment project with python/css/html/js!
 
 **A open source desktop**
-**Due to some limitations the progress of this DE has been paused/slowed down...**
+**Due to some limitations the progress of this DE has been pretty messy. some days there is 4 updates, in some there is none so its unstable progress for now...**
 
 ---
 
@@ -15,6 +15,7 @@
 ## Installation
 - First install the setup.sh
 - run it in the folder you wanna install our program
+* or you can just run this cmd ```curl -s https://raw.githubusercontent.com/radin6262/Open-Desktop/refs/heads/main/setup.sh | bash ``` but you'll need to run it in the dir you want!
 - open the Open-desktop folder that was made by the program
 - Run main.py
 
@@ -24,8 +25,8 @@ Public contributions are **accepted**.
 
 If you wish to contribute:
 
-* Contact the author directly with provided mail
-* Contributions may be reviewed and merged manually
+* fork the repo and apply changes and submit pull request
+* Pull requests will be reviewed and merged manually
 
 ## Disclaimer
 
