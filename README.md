@@ -3,7 +3,7 @@
 > The only good desktop environment project with python/css/html/js!
 
 **A open source desktop**
-**Due to some limitations the progress of this DE has been pretty messy. some days there is 4 updates, in some there is none so its unstable progress for now...**
+**Ummm This Project Will be Discontinued but you can still use it if you like it**
 
 ---
 
