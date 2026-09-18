@@ -1,9 +1,12 @@
 # The Open Desktop Project
 
-> The only good desktop environment project with python/css/html/js!
+> The only ---- desktop environment project with python/css/html/js!
 
 **A open source desktop**
-**Ummm This Project Will be Discontinued but you can still use it if you like it**
+**This Project Has Been Discontinued**
+
+##### **If youre interested into OS related things check out my RustyOs repo(im basically building an os with rust)**
+
 
 ---
 
@@ -35,4 +38,3 @@ This software is provided **as-is**, without any warranty. Use at your own risk.
 ## Author
 
 **Radin6262** Copyright 2025<br>
-G-Mail: radindavari054laptop@gmail.com
