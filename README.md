@@ -16,20 +16,14 @@
 * Linux
 
 ## Installation
-- First install the setup.sh
-- run it in the folder you wanna install our program
-* or you can just run this cmd ```curl -s https://raw.githubusercontent.com/radin6262/Open-Desktop/refs/heads/main/setup.sh | bash ``` but you'll need to run it in the dir you want!
+- First Locate to a folder(recommendedly empty)
+- run <pre>curl -s https://raw.githubusercontent.com/radin6262/Open-Desktop/refs/heads/main/setup.sh | bash</pre>
 - open the Open-desktop folder that was made by the program
 - Run main.py
 
 ## Contributing
 
-Public contributions are **accepted**.
-
-If you wish to contribute:
-
-* fork the repo and apply changes and submit pull request
-* Pull requests will be reviewed and merged manually
+- This Project Has been **discontinued**
 
 ## Disclaimer
 
